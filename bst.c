@@ -1,3 +1,8 @@
+/* CS261- Assignment 3 */
+/* Name: Sky Wilson
+ * Date: 4/30/2105
+ */
+
 /*
  File: bst.c
  Implementation of the binary search tree data structure.

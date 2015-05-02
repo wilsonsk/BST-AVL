@@ -1,3 +1,8 @@
+/* CS261- Assignment 3 */
+/* Name: Sky Wilson
+ * Date: 4/30/2105
+ */
+
 #include <stdio.h>
 #include <assert.h>
 #include "bst.h"
