@@ -39,4 +39,26 @@ struct AVLNode* _rotateRight(struct AVLNode* cur);
 
 /****************************************************************************/
 
-	
+void _freeAVLTree(struct AVLNode* node){
+	if(node != 0){
+		_freeAVLTree(node->left);
+		_freeAVLTree(node->right);
+	}
+	free(node);
+}
+
+void clearAVLTree(struct AVLTree* tree){
+	_freeAVLTree(tree->root);
+	tree->root = 0;
+	tree->size = 0;
+}
+
+void freeAVLTree(struct AVLTree* tree){
+	clearAVLTree(tree);
+	free(tree);
+}
+
+int isEmptyAVLTree(struct AVLTree* tree){ return tree->size == 0 ; }
+
+int sizeAVLTree(struct AVLTree* tree){ return tree-> size ; }
+
