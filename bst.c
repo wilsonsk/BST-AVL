@@ -1,4 +1,4 @@
-/* CS261- Assignment 3 */
+/* CS261- Assignment 4 */
 /* Name: Sky Wilson
  * Date: 4/30/2105
  */
@@ -130,7 +130,21 @@ int sizeBSTree(struct BSTree *tree) { return tree->cnt; }
 struct Node *_addNode(struct Node *cur, TYPE val)
 {
 	/*write this*/
-	return NULL;
+	struct Node* newNode = NULL;
+	if(cur == NULL){
+		newNode = (struct Node*)malloc(sizeof(struct Node));
+		newNode->val = val;
+		newNode->left = newNode->right = 0;
+		return newNode;
+	}
+
+	if(compare(val, cur->val) == -1){
+		cur->left = _addNode(cur->left, val);
+	}else if(compare(val, cur->val) == 1){
+		cur->right = _addNode(cur->right, val);
+	}
+	
+	return cur;
 }
 
 /*
@@ -164,7 +178,17 @@ void addBSTree(struct BSTree *tree, TYPE val)
 int containsBSTree(struct BSTree *tree, TYPE val)
 {
 	/*write this*/
-		return 0;
+	struct Node* iter = tree->root;
+	while(iter != 0){
+		if(compare(val, iter->val) == -1){
+			iter = iter->left;
+		}else if(compare(val, iter->val) == 0){
+			return 1;
+		}else{
+			iter = iter->right;
+		}
+	}	
+	return 0;
 }
 
 /*
@@ -179,7 +203,10 @@ int containsBSTree(struct BSTree *tree, TYPE val)
 TYPE _leftMost(struct Node *cur)
 {
 	/*write this*/
-	return NULL;
+	while(cur->left != 0){
+		cur = cur->left;
+	}
+	return cur->val;
 }
 
 
@@ -198,7 +225,14 @@ Note:  If you do this iteratively, the above hint does not apply.
 struct Node *_removeLeftMost(struct Node *cur)
 {
 	/*write this*/
-	return NULL;
+	if(cur->left == 0){
+		struct Node* newCur = cur->right;
+		free(cur);
+		return newCur;
+	}
+	cur->left = _removeLeftMost(cur->left);
+	
+	return cur;
 }
 /*
  recursive helper function to remove a node from the tree
@@ -212,8 +246,21 @@ struct Node *_removeLeftMost(struct Node *cur)
 /*----------------------------------------------------------------------------*/
 struct Node *_removeNode(struct Node *cur, TYPE val)
 {
-	/*write this*/
-		return NULL;
+	/*write this*/	
+	if(compare(cur->val ,val) == 0){
+		if(cur->right == 0){
+			return cur->left;
+		}else{
+			cur->val = _leftMost(cur->right);
+			cur->right = _removeLeftMost(cur->right);
+		}
+	}else if(compare(cur->val, val)== 1){
+		cur->left = _removeNode(cur->left, val);
+	}else{
+		cur->right = _removeNode(cur->right, val);
+	}
+		
+	return cur;
 
 }
 /*
@@ -497,19 +544,19 @@ int main(int argc, char *argv[]){
 
    //After implementing your code, please uncommnet the following calls to the test functions and test your code 
 
-   // testAddNode();
+    testAddNode();
 	
 	printf("\n");
-   //	testContainsBSTree();
+   	testContainsBSTree();
 	
 	printf("\n");
-    //testLeftMost();
+    testLeftMost();
 	
 	printf("\n");
-    //testRemoveLeftMost();
+    testRemoveLeftMost();
 	
 	printf("\n");
-    //testRemoveNode();
+    testRemoveNode();
     
 	
 	return 0;

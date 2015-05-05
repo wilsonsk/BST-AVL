@@ -1,4 +1,4 @@
-/* CS261- Assignment 3 */
+/* CS261- Assignment 4 */
 /* Name: Sky Wilson
  * Date: 4/30/2105
  */
@@ -31,15 +31,37 @@
 int compare(TYPE left, TYPE right)
 {
     /*FIXME: write this*/
+	struct data* d_left = NULL;
+	struct data* d_right = NULL;
+/*
+	d_left->number = *((int*)left);
+	d_right->number = *((int*)right);
+	if(d_left->number < d_right->number){
+		return -1;
+	}else if(d_left->number > d_right->number){
+		return 1;
+	}else if(d_left->number == d_right->number){
+		return 2;
+	}	
 	return 0;
-
+*/	
+	d_left = ((struct data*)left);
+	d_right = ((struct data*)right);
+	if(d_left->number < d_right->number){
+		return -1;
+	}else if(d_left->number > d_right->number){
+		return 1;
+	}	
+	return 0;
+	
 }
 
 /*Define this function, type casting the value of void * to the desired type*/
 void print_type(TYPE curval)
 {
     /*FIXME: write this*/
-
+	struct data* temp = ((struct data*)curval);
+	printf("curval = %s", temp->name);
 }
 
 
