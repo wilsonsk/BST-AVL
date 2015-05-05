@@ -11,11 +11,11 @@ struct AVLNode{
 };
 
 struct AVLTree{
-	struct* AVLNode* root;
+	struct AVLNode* root;
 	int size;
 };
 
-void _initAVL(struct AVLTree* tree){
+void _initAVLTree(struct AVLTree* tree){
 	tree->root = 0;
 	tree->size = 0;
 }
@@ -31,7 +31,7 @@ struct AVLTree* newAVLTree(){
 /* Prototypes for private functions */
 int _height(struct AVLNode* cur);
 void _setHeight(struct AVLNode* cur);
-int balanceFactor(struct AVLNode* cur);
+int _balanceFactor(struct AVLNode* cur);
 
 struct AVLNode* _balance(struct AVLNode* cur);
 struct AVLNode* _rotateLeft(struct AVLNode* cur);
@@ -66,7 +66,7 @@ struct AVLNode* _addNode(struct AVLNode* cur, void* val, comparator compare){
 	struct AVLNode* newNode = 0;
 	if(cur == 0) /* BASE CASE */
 	{
-		*/ Create a new one and return it */
+		/* Create a new one and return it */
 		newNode = (struct AVLNode*)malloc(sizeof(struct AVLNode));
 		assert(newNode != 0);
 		newNode->left = newNode->right = 0;
@@ -133,11 +133,11 @@ struct AVLNode* _removeNode(struct AVLNode* cur, void* val, comparator compare){
 		if(cur->right != 0){
 			cur->val = _leftMost(cur->right);
 			cur->right = _removeLeftMost(cur->right);
-			/* return _balance(cur); /* could remove this since there's a return at the end */
+			return _balance(cur); /* could remove this since there's a return at the end */
 		}else{
-			temp = cur->left;
+			newNode = cur->left;
 			free(cur);
-			return temp;
+			return newNode;
 		}
 	}else if((*compare)(val, cur->val) < 0){	
 		cur->left = _removeNode(cur->left, val, compare);
@@ -162,21 +162,22 @@ int _height(struct AVLNode* cur){
 
 /* UTILITY FUNCTION TO SET THE HEIGHT OF A NODE */
 /* IF LH PATH < RH PATH HEIGHT = RH + 1;   */
-int _setHeight(struct AVLNode* cur){
-	int lh = _heigt(cur->left);
+void _setHeight(struct AVLNode* cur){
+	int lh = _height(cur->left);
 	int rh = _height(cur->right);
 	if(lh < rh){
 		cur->hght = (rh + 1);
 	}else{
-		cur->hght = (lh - 1;
-}
+		cur->hght = (lh - 1);
+	}
+}	
 
 /* UTILITY FUNCTION TO COMPUTE THE BALANCE FACTOR OF A NODE */
 int _balanceFactor(struct AVLNode* cur){
 	return (_height(cur->right) - _height(cur->left));
 }
 
-struct AVLNode* *_balance(struct AVLNode* cur){
+struct AVLNode* _balance(struct AVLNode* cur){
 	int cbf = _balanceFactor(cur);
 	if(cbf < -1){ /* CUR IS HEAVY ON THE LEFT */
 		if(_balanceFactor(cur->left) > 0){	/* CHECK FOR DOUBLE ROTATION ie IS THE LEFTCHILD HEAVY ON THE RIGHT? */
