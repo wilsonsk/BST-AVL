@@ -222,3 +222,9 @@ struct AVLNode* _rotateRight(struct AVLNode* cur){
 	
 	return cur;
 }
+
+int main(){
+
+
+return 0;
+}
