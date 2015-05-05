@@ -31,7 +31,7 @@ struct AVLTree* newAVLTree(){
 /* Prototypes for private functions */
 int _height(struct AVLNode* cur);
 void _setHeight(struct AVLNode* cur);
-int bf(struct AVLNode* cur);
+int balanceFactor(struct AVLNode* cur);
 
 struct AVLNode* _balance(struct AVLNode* cur);
 struct AVLNode* _rotateLeft(struct AVLNode* cur);
@@ -74,6 +74,8 @@ struct AVLNode* _addNode(struct AVLNode* cur, void* val, comparator compare){
 		newNode->hght = 0;	/* or SetHeight on newNode */
 		return newNode;
 	}else{	/* RECURSIVE CASE */
+		/* IF QUERY VAL < CUR NODE VAL THEN TRAVERSE LEFT */
+		/* ELSE IF QUERY VAL > CUR NODE VAL THEN TRAVERSE RIGHT */ 
 		if((*compare)(val, cur->val) < 0){
 			cur->left = _addNode(cur->left, val, compare);	/* Functional approach, rebuild subtree */
 		}else{
@@ -112,3 +114,110 @@ void* _leftMost(struct AVLNode* cur){
 	return cur->val;
 }
 
+struct AVLNode* _removeLeftMost(struct AVLNode* cur){
+	struct AVLNode* newLeftMost = 0;
+	if(cur->left != 0){
+		cur->left = _removeLeftMost(cur->left);
+		return _balance(cur);		/* HEIGHT BALANCE UPDATED TREE POST NODE REMOVAL */
+	}
+
+	newLeftMost = cur->right;
+	free(cur);
+	return newLeftMost;
+} 
+
+struct AVLNode* _removeNode(struct AVLNode* cur, void* val, comparator compare){
+	struct AVLNode* newNode = 0;
+	
+	if((*compare)(val, cur->val) == 0){
+		if(cur->right != 0){
+			cur->val = _leftMost(cur->right);
+			cur->right = _removeLeftMost(cur->right);
+			/* return _balance(cur); /* could remove this since there's a return at the end */
+		}else{
+			temp = cur->left;
+			free(cur);
+			return temp;
+		}
+	}else if((*compare)(val, cur->val) < 0){	
+		cur->left = _removeNode(cur->left, val, compare);
+	}else{
+		cur->right = _removeNode(cur->right, val, compare);
+	}
+	return _balance(cur);
+}
+
+void removeAVLTree(struct AVLTree* tree, void* val, comparator compare){
+	if(containsAVLTree(tree, val, compare)){
+		tree->root = _removeNode(tree->root, val, compare);
+		tree->size--;
+	}
+}
+
+/* UTILITY FUNCTION TO DETERMINE THE HEIGHT OF A NODE */
+int _height(struct AVLNode* cur){
+	if(cur == 0){ return -1; }
+	return cur->hght;
+}
+
+/* UTILITY FUNCTION TO SET THE HEIGHT OF A NODE */
+/* IF LH PATH < RH PATH HEIGHT = RH + 1;   */
+int _setHeight(struct AVLNode* cur){
+	int lh = _heigt(cur->left);
+	int rh = _height(cur->right);
+	if(lh < rh){
+		cur->hght = (rh + 1);
+	}else{
+		cur->hght = (lh - 1;
+}
+
+/* UTILITY FUNCTION TO COMPUTE THE BALANCE FACTOR OF A NODE */
+int _balanceFactor(struct AVLNode* cur){
+	return (_height(cur->right) - _height(cur->left));
+}
+
+struct AVLNode* *_balance(struct AVLNode* cur){
+	int cbf = _balanceFactor(cur);
+	if(cbf < -1){ /* CUR IS HEAVY ON THE LEFT */
+		if(_balanceFactor(cur->left) > 0){	/* CHECK FOR DOUBLE ROTATION ie IS THE LEFTCHILD HEAVY ON THE RIGHT? */
+			cur->left = _rotateLeft(cur->left);	/* yes th left child was heavy on the right side , so rotate child to the left first */
+		}
+		return _rotateRight(cur);
+	}else if(cbf > 1){
+		if(_balanceFactor(cur->right) < 0){
+			cur->right = _rotateRight(cur->right);
+		}
+		return _rotateLeft(cur);
+	}
+
+	/* ONCE ROTATION IS DONT, WE MUST SE THE HEIGHTS APPROPRIATELY */
+
+	_setHeight(cur);
+	return cur;
+}
+
+struct AVLNode* _rotateLeft(struct AVLNode* cur){
+	struct AVLNode* newTop = 0;
+	newTop = cur->right;
+	cur->right = newTop->left;
+	newTop->left = cur;
+
+	/* RESET THE HEIGHTS FOR ALL NODES THAT HAVE CHANGES HEIGHTS */
+	_setHeight(cur);
+	_setHeight(newTop);
+	
+	return cur;
+}
+
+struct AVLNode* _rotateRight(struct AVLNode* cur){
+	struct AVLNode* newTop = 0;
+	newTop = cur->left;
+	cur->left = newTop->right;
+	newTop->right = cur;
+
+	/* RESET THE HEIGHTS FOR ALL NODES THAT HAVE CHANGES HEIGHTS */
+	_setHeight(cur);
+	_setHeight(newTop);
+	
+	return cur;
+}
