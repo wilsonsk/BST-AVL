@@ -62,3 +62,53 @@ int isEmptyAVLTree(struct AVLTree* tree){ return tree->size == 0 ; }
 
 int sizeAVLTree(struct AVLTree* tree){ return tree-> size ; }
 
+struct AVLNode* _addNode(struct AVLNode* cur, void* val, comparator compare){
+	struct AVLNode* newNode = 0;
+	if(cur == 0) /* BASE CASE */
+	{
+		*/ Create a new one and return it */
+		newNode = (struct AVLNode*)malloc(sizeof(struct AVLNode));
+		assert(newNode != 0);
+		newNode->left = newNode->right = 0;
+		newNode->val = val;
+		newNode->hght = 0;	/* or SetHeight on newNode */
+		return newNode;
+	}else{	/* RECURSIVE CASE */
+		if((*compare)(val, cur->val) < 0){
+			cur->left = _addNode(cur->left, val, compare);	/* Functional approach, rebuild subtree */
+		}else{
+			cur->right = _addNode(cur->right, val, compare);
+		}
+	}
+	return _balance(cur);
+}
+
+void addAVLTree(struct AVLTree* tree, void* val, comparator compare){
+	tree->root = _addNode(tree->root, val, compare);
+	tree->size++;
+}
+
+int containsAVLTree(struct AVLTree* tree, void* val, comparator compare){
+	/* cur == iter */
+	struct AVLNode* cur;
+	cur = tree->root;
+	
+	while(cur != 0){
+		if((*compare)(cur->val, val) == 0){
+			return 1;
+		}else if ((*compare)(cur->val, val) < 0){
+			cur = cur->left;
+		}else{	
+			cur = cur->right;
+		}
+	}
+	return 0;
+}
+
+void* _leftMost(struct AVLNode* cur){
+	while(cur->left != 0){
+		cur = cur->left;
+	}
+	return cur->val;
+}
+
